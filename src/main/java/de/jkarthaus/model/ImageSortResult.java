@@ -1,5 +1,7 @@
 package de.jkarthaus.model;
 
+import org.apache.commons.lang.StringUtils;
+
 public class ImageSortResult {
 
 	private int duplications;
@@ -38,17 +40,21 @@ public class ImageSortResult {
 		return errors;
 	}
 
-	public String getResultText() {
-		String result = "<b>Bilder Synchronisation durchgeführt</b><p>";
-		result += "<b>" + getCountImages() + "<b> Bilder wurden verschoben.<p>";
-		result += "<b>" + getDuplications() + "<b> Duplikate waren enthalten.<p>";
-		result += "<b>" + getErrors() + "<b> Bilder erzeugten Fehler.<p>";
+	public String toHtmlString() {
+		String result = "<b>Bilder Synchronisation durchgeführt</b><p>\n";
+		result += "<b>" + getCountImages() + "<b> Bilder wurden verschoben.<p>\n";
+		result += "<b>" + getDuplications() + "<b> Duplikate waren enthalten.<p>\n";
+		result += "<b>" + getErrors() + "<b> Bilder erzeugten Fehler.<p>\n";
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return getResultText();
+		String text = toHtmlString();
+		text = StringUtils.remove(text, "<b>");
+		text = StringUtils.remove(text, "</b>");
+		text = StringUtils.remove(text, "<p>");
+		return text;
 	}
 
 }

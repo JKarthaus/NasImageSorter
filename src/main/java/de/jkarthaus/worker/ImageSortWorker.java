@@ -15,14 +15,14 @@ import de.jkarthaus.model.ImageSortResult;
 import de.jkarthaus.model.SortSource;
 import de.jkarthaus.tools.ConfigTools;
 import de.jkarthaus.tools.FolderTools;
-import de.jkarthaus.tools.TikaJPGParser;
+import de.jkarthaus.tools.TikaContentParser;
 
 public class ImageSortWorker {
 
 	Properties config = new Properties();
 
-	private String[] extensions = new String[] { "jpg", "JPG" };
-	private TikaJPGParser tikaJPGParser;
+	private String[] extensions = new String[] { "jpg", "JPG", "mp4", "MP4" };
+	private TikaContentParser tikaJPGParser;
 	static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 	private static final Logger logger = LogManager.getLogger(ImageSortWorker.class);
 
@@ -32,7 +32,7 @@ public class ImageSortWorker {
 	 */
 	public ImageSortWorker(Properties config) {
 		this.config = config;
-		tikaJPGParser = new TikaJPGParser();
+		tikaJPGParser = new TikaContentParser();
 	}
 
 	/**
@@ -48,17 +48,27 @@ public class ImageSortWorker {
 			List<File> sourceFileList = (List<File>) FileUtils.listFiles(sortSourcesList.get(i).getSourceDir(),
 					extensions, true);
 			for (File sourceFile : sourceFileList) {
+				boolean isDuplication = false;
 				try {
 					logger.info("Processing File:" + sourceFile.getCanonicalPath());
 					String destFile = getDestFilename(sourceFile, sortSourcesList.get(i).getPreString());
-					while (destinationExists(destFile)) {
-						destFile = getDuplicateFilename(destFile);
-						imageSortResult.increaseDuplicationImage();
+					if (destFile != null) {
+						while (destinationExists(destFile)) {
+							destFile = getDuplicateFilename(destFile);
+							isDuplication = true;
+						}
+						// now move the File
+						logger.debug("Move File from:" + sourceFile.getAbsolutePath() + " -> " + destFile);
+						FileUtils.moveFile(sourceFile, new File(destFile));
+						if (isDuplication) {
+							imageSortResult.increaseDuplicationImage();
+						} else {
+							imageSortResult.increaseRegularImage();
+						}
+					} else {
+						logger.info("File NOT moved");
+						imageSortResult.increaseErrors();
 					}
-					// now move the File
-					logger.debug("Move File from:" + sourceFile.getAbsolutePath() + " -> " + destFile);
-					FileUtils.copyFile(sourceFile, new File(destFile), true);
-					imageSortResult.increaseRegularImage();
 				} catch (Exception e) {
 					logger.error(e);
 					imageSortResult.increaseErrors();
@@ -115,17 +125,19 @@ public class ImageSortWorker {
 	 * @return
 	 */
 	private String getDestFilename(File srcFile, String filePre) {
-		GregorianCalendar exifDate = new GregorianCalendar();
+		GregorianCalendar metaDate = new GregorianCalendar();
 		String result = config.getProperty("destination");
 		try {
-			exifDate.setTime(tikaJPGParser.getExifCreateDate(srcFile));
-			logger.debug("Exif Date from Image =  " + simpleDateFormat.format(exifDate.getTime()));
+
+			metaDate.setTime(tikaJPGParser.getMetaInfCreateDate(srcFile));
+			logger.debug("Exif Date from File =  " + simpleDateFormat.format(metaDate.getTime()));
 		} catch (Exception e) {
 			logger.error(e);
+			return null;
 		}
-		result += FolderTools.getLevel1String(exifDate);
-		result += FolderTools.getLevel2String(exifDate);
-		result += FolderTools.getDestFilename(filePre, exifDate, FilenameUtils.getExtension(srcFile.getName()));
+		result += FolderTools.getLevel1String(metaDate);
+		result += FolderTools.getLevel2String(metaDate);
+		result += FolderTools.getDestFilename(filePre, metaDate, FilenameUtils.getExtension(srcFile.getName()));
 		return result;
 	}
 

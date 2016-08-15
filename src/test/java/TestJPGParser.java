@@ -10,6 +10,7 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.jpeg.JpegParser;
+import org.apache.tika.parser.mp4.MP4Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
@@ -20,12 +21,16 @@ public class TestJPGParser {
 		// detecting the file type
 		BodyContentHandler handler = new BodyContentHandler();
 		Metadata metadata = new Metadata();
-		FileInputStream inputstream = new FileInputStream(new File("/home/joern/IMG_5560.JPG"));
+		FileInputStream inputstream = new FileInputStream(new File("/home/joern/test/imgsrc/MOV_0012.mp4"));
 		ParseContext pcontext = new ParseContext();
 
 		// Jpeg Parse
 		JpegParser JpegParser = new JpegParser();
-		JpegParser.parse(inputstream, handler, metadata, pcontext);
+		//org.apache.tika.parser.video
+		MP4Parser mp4Parser = new MP4Parser();
+		
+		//JpegParser.parse(inputstream, handler, metadata, pcontext);
+		mp4Parser.parse(inputstream, handler, metadata, pcontext);
 		System.out.println("Contents of the document:" + handler.toString());
 		System.out.println("Metadata of the document:");
 		String[] metadataNames = metadata.names();
