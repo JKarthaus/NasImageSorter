@@ -1,2 +1,12 @@
 # NasImageSorter
-Import Images from one or many Sources to a Strructured Image Destination 
+Import Images and Clips from one or many Sources to a Structured Image Destination.
+
+  _   _           _____ _____                             _____            _            
+ | \ | |   /\    / ____|_   _|                           / ____|          | |           
+ |  \| |  /  \  | (___   | |  _ __ ___   __ _  __ _  ___| (___   ___  _ __| |_ ___ _ __ 
+ | . ` | / /\ \  \___ \  | | | '_ ` _ \ / _` |/ _` |/ _ \\___ \ / _ \| '__| __/ _ \ '__|
+ | |\  |/ ____ \ ____) |_| |_| | | | | | (_| | (_| |  __/____) | (_) | |  | ||  __/ |   
+ |_| \_/_/    \_\_____/|_____|_| |_| |_|\__,_|\__, |\___|_____/ \___/|_|   \__\___|_|   
+                                               __/ |                                    
+                                              |___/                                     
+ 
