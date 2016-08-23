@@ -9,15 +9,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
+@Component
 public class TikaContentParser {
 
 	public static final String IMAGE_META_CREATE = "Date/Time";
@@ -30,7 +32,7 @@ public class TikaContentParser {
 	ParseContext pcontext = new ParseContext();
 	AutoDetectParser parser = new AutoDetectParser();
 
-	private static final Logger logger = LogManager.getLogger(TikaContentParser.class);
+	private final static Logger logger = LoggerFactory.getLogger(TikaContentParser.class);
 
 	/**
 	 * 
@@ -63,7 +65,7 @@ public class TikaContentParser {
 				result = dateFormat2.parse(dateString);
 			} catch (ParseException e1) {
 				logger.error("Parsing Creation Date failed try 2 Formats both failed");
-				logger.error(e);
+				logger.error(e.getMessage());
 			}
 		}
 

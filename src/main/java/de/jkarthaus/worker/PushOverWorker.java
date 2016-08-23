@@ -2,8 +2,8 @@ package de.jkarthaus.worker;
 
 import java.util.Properties;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jkarthaus.model.ImageSortResult;
 import net.pushover.client.PushoverClient;
@@ -13,7 +13,7 @@ import net.pushover.client.PushoverRestClient;
 
 public class PushOverWorker {
 
-	private static final Logger logger = LogManager.getLogger(ImageSortWorker.class);
+	private final static Logger logger = LoggerFactory.getLogger(PushOverWorker.class);
 	private PushoverClient client = new PushoverRestClient();
 	private boolean sendPushover;
 	private String apiToken;
@@ -51,7 +51,7 @@ public class PushOverWorker {
 			client.pushMessage(
 					PushoverMessage.builderWithApiToken(apiToken).setUserId(userToken).setMessage(message).build());
 		} catch (PushoverException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			result = true;
 		}
 		return result;

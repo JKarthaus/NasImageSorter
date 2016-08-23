@@ -4,12 +4,13 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import de.jkarthaus.model.ImageSortResult;
 import de.jkarthaus.model.SortSource;
@@ -17,23 +18,22 @@ import de.jkarthaus.tools.ConfigTools;
 import de.jkarthaus.tools.FolderTools;
 import de.jkarthaus.tools.TikaContentParser;
 
+@Component
 public class ImageSortWorker {
 
-	Properties config = new Properties();
-
 	private String[] extensions = new String[] { "jpg", "JPG", "mp4", "MP4" };
-	private TikaContentParser tikaJPGParser;
+	
 	static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-	private static final Logger logger = LogManager.getLogger(ImageSortWorker.class);
 
-	/**
-	 * 
-	 * @param config
-	 */
-	public ImageSortWorker(Properties config) {
-		this.config = config;
-		tikaJPGParser = new TikaContentParser();
-	}
+	private final static Logger logger = LoggerFactory.getLogger(ImageSortWorker.class);
+	
+	@Autowired
+	ConfigTools configTools;
+	
+	@Autowired
+	TikaContentParser tikaContentParser;
+	
+	
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class ImageSortWorker {
 	public ImageSortResult sortImages() {
 		ImageSortResult imageSortResult = new ImageSortResult();
 		logger.info("Woker starting...");
-		List<SortSource> sortSourcesList = ConfigTools.getSources(config);
+		List<SortSource> sortSourcesList = ConfigTools.getSources(configTools.getConfig());
 		// -- Iterate the Sources
 		for (int i = 0; i < sortSourcesList.size(); i++) {
 			logger.info("Processing Source:" + sortSourcesList.get(i).getSourceDir().getAbsolutePath());
@@ -70,7 +70,7 @@ public class ImageSortWorker {
 						imageSortResult.increaseErrors();
 					}
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 					imageSortResult.increaseErrors();
 				}
 			}
@@ -126,13 +126,13 @@ public class ImageSortWorker {
 	 */
 	private String getDestFilename(File srcFile, String filePre) {
 		GregorianCalendar metaDate = new GregorianCalendar();
-		String result = config.getProperty("destination");
+		String result = configTools.getConfig().getProperty("destination");
 		try {
 
-			metaDate.setTime(tikaJPGParser.getMetaInfCreateDate(srcFile));
+			metaDate.setTime(tikaContentParser.getMetaInfCreateDate(srcFile));
 			logger.debug("Exif Date from File =  " + simpleDateFormat.format(metaDate.getTime()));
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			return null;
 		}
 		result += FolderTools.getLevel1String(metaDate);
