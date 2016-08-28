@@ -10,8 +10,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import de.jkarthaus.model.ImageSortResult;
 import de.jkarthaus.tools.ConfigTools;
 import de.jkarthaus.worker.ImageSortWorker;
+import de.jkarthaus.worker.PushOverWorker;
 
 @SpringBootApplication
 public class MediaSorterApplication implements CommandLineRunner {
@@ -19,12 +21,15 @@ public class MediaSorterApplication implements CommandLineRunner {
 	private final static Logger logger = LoggerFactory.getLogger(MediaSorterApplication.class);
 
 	Date startTime = new Date();
-	
+
 	@Autowired
 	ConfigTools configTools;
 
 	@Autowired
 	ImageSortWorker imageSortWorker;
+
+	@Autowired
+	PushOverWorker pushOverWorker;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -40,7 +45,8 @@ public class MediaSorterApplication implements CommandLineRunner {
 		logger.info("--------------------------------------------------------------------------");
 
 		configTools.loadFromFile(configFile);
-		imageSortWorker.sortImages();
+		ImageSortResult imageSortResult = imageSortWorker.sortImages();
+		pushOverWorker.sendToPushOver(imageSortResult);
 		Date endTime = new Date();
 		long diff = endTime.getTime() - startTime.getTime();
 		logger.info("Working Time : " + (diff / 1000 % 60) + " Seconds.");
