@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -44,19 +45,26 @@ public class TikaContentParser {
 	 * @throws FileNotFoundException
 	 * @throws ParseException
 	 */
+	@SuppressWarnings("resource")
 	public Date getMetaInfCreateDate(File mediaFile)
 			throws FileNotFoundException, IOException, SAXException, TikaException {
 		Metadata metadata = new Metadata();
 		Date result = null;
 
 		parser.parse(new FileInputStream(mediaFile), handler, metadata, pcontext);
-
+		// Try to get Image Date
 		String dateString = metadata.get(IMAGE_META_CREATE);
+		// Try to get MPG Date
 		if (dateString == null) {
 			logger.debug("Exif Meta String not found trying MPG Meta Data");
 			dateString = metadata.get(MPG_META_CREATE);
 		}
-
+		// Date not set in MetaData
+		if (StringUtils.defaultString(dateString, "0000").startsWith("0000")) {
+			logger.error("Cannot find valid Date in MetaData - Use Now as Date.");
+			return new Date();
+		}
+		// Date is found - try to parse
 		try {
 			result = dateFormat1.parse(dateString);
 		} catch (ParseException e) {

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class FolderTools {
 
-	static SimpleDateFormat destFileFormatter = new SimpleDateFormat("dd-MM-yyyy_H-mm-ss", Locale.GERMANY);
+	static SimpleDateFormat destFileFormatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss", Locale.GERMANY);
 	static SimpleDateFormat level2Formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMANY);
 
 	/**
