@@ -28,6 +28,8 @@ public class TikaContentParser {
 
 	DateFormat dateFormat1 = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
 	DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	DateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	// meta:creation-date: 2009-07-26T12:39:52
 
 	BodyContentHandler handler = new BodyContentHandler();
 	ParseContext pcontext = new ParseContext();
@@ -65,16 +67,39 @@ public class TikaContentParser {
 			return new Date();
 		}
 		// Date is found - try to parse
+		Boolean parseFail = false;
 		try {
 			result = dateFormat1.parse(dateString);
+			parseFail = false;
 		} catch (ParseException e) {
 			logger.debug("Parsing DateFormat1 failded, try DateFormat2");
+			parseFail = true;
+		}
+		// Try format 2
+		if (parseFail) {
 			try {
 				result = dateFormat2.parse(dateString);
+				parseFail = false;
 			} catch (ParseException e1) {
-				logger.error("Parsing Creation Date failed try 2 Formats both failed");
-				logger.error(e.getMessage());
+				logger.debug("Parsing DateFormat2 fail, try DateFormat3");
+				parseFail = true;
+
 			}
+		}
+		// Try format 3		
+		if (parseFail) {
+			try {
+				result = dateFormat3.parse(dateString);
+				parseFail = false;
+			} catch (ParseException e1) {
+				logger.debug("Parsing DateFormat3 fail");
+				parseFail = true;
+
+			}
+		}
+		// All parse Attemps failed
+		if (parseFail) {
+			logger.error("Parsing Creation Date failed try 3 Formats all failed");
 		}
 
 		return result;
