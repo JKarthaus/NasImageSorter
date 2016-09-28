@@ -6,3 +6,14 @@ Import Images and Clips from one or many Sources to a Structured Image Destinati
 
 ## Folder Structure after NasImageSort
 ![After NasImageSort](http://www.joern-karthaus.de/blog/img/sortiert.png)
+
+## How to use it  
+
+1. Build the Source or ![Download](https://github.com/JKarthaus/NasImageSorter/blob/master/_INSTALL_/MediaSorter) the Binary.
+
+2. Edit the ![Config File ](https://github.com/JKarthaus/NasImageSorter/blob/master/_INSTALL_/mediasorter.properties)
+
+On most **Linux** Systems simply call ./MediaSorter <ConfigFile> 
+
+ON **Windows** Systems you must type java -jar MediaSorter <ConfigFile>
+
