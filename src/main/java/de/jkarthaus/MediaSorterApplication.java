@@ -18,48 +18,47 @@ import de.jkarthaus.worker.PushOverWorker;
 @SpringBootApplication
 public class MediaSorterApplication implements CommandLineRunner {
 
-	private final static Logger logger = LoggerFactory.getLogger(MediaSorterApplication.class);
+    private final static Logger logger = LoggerFactory.getLogger(MediaSorterApplication.class);
 
-	Date startTime = new Date();
+    Date startTime = new Date();
 
-	@Autowired
-	ConfigTools configTools;
+    @Autowired
+    ConfigTools configTools;
 
-	@Autowired
-	ImageSortWorker imageSortWorker;
+    @Autowired
+    ImageSortWorker imageSortWorker;
 
-	@Autowired
-	PushOverWorker pushOverWorker;
+    @Autowired
+    PushOverWorker pushOverWorker;
 
-	@Override
-	public void run(String... args) throws Exception {
-		if (args == null || args.length != 1) {
-			logger.error("I want a config File at Parameter 1");
-			throw new ExitException();
-		}
-		File configFile = new File(args[0]);
-		if (!configFile.exists() || !configFile.canRead()) {
-			logger.error("Config File:" + args[0] + " not found or cannot read.");
-			throw new ExitException();
-		}
-		logger.info("--------------------------------------------------------------------------");
+    @Override
+    public void run(String... args) throws Exception {
+        if (args == null || args.length != 1) {
+            logger.error("I want a config File at Parameter 1");
+            throw new ExitException();
+        }
+        File configFile = new File(args[0]);
+        if (!configFile.exists() || !configFile.canRead()) {
+            logger.error("Config File:" + args[0] + " not found or cannot read.");
+            throw new ExitException();
+        }
+        logger.info("--------------------------------------------------------------------------");
 
-		configTools.loadFromFile(configFile);
-		ImageSortResult imageSortResult = imageSortWorker.sortImages();
-		pushOverWorker.sendToPushOver(imageSortResult);
-		Date endTime = new Date();
-		long diff = endTime.getTime() - startTime.getTime();
-		logger.info("Working Time : " + (diff / 1000 % 60) + " Seconds.");
-		logger.info("--------------------------------------------------------------------------");
+        configTools.loadFromFile(configFile);
+        ImageSortResult imageSortResult = imageSortWorker.sortImages();
+        pushOverWorker.sendToPushOver(imageSortResult);
+        Date endTime = new Date();
+        long diff = endTime.getTime() - startTime.getTime();
+        logger.info("Working Time : " + (diff / 1000 % 60) + " Seconds.");
+        logger.info("--------------------------------------------------------------------------");
 
-	}
+    }
 
-	/**
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		SpringApplication.run(MediaSorterApplication.class, args);
-	}
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(MediaSorterApplication.class, args);
+    }
 
 }
