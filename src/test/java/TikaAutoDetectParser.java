@@ -12,7 +12,7 @@ import org.xml.sax.SAXException;
 
 public class TikaAutoDetectParser {
 
-	public static void main(String[] args) throws FileNotFoundException, IOException, SAXException, TikaException {
+	public static void main(String[] args) throws IOException, SAXException, TikaException {
 		AutoDetectParser parser = new AutoDetectParser();
 		BodyContentHandler handler = new BodyContentHandler();
 		MP4Parser mp4Parser = new MP4Parser();

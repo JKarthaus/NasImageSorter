@@ -1,28 +1,26 @@
 package de.jkarthaus.tools;
 
+import de.jkarthaus.model.SortSource;
+import jakarta.inject.Singleton;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import de.jkarthaus.model.SortSource;
-
-@Component
+@Singleton
 public class ConfigTools {
 
 	private final static Logger logger = LoggerFactory.getLogger(ConfigTools.class);
 
 	Properties config = new Properties();
 
-	public void loadFromFile(File configFile) throws FileNotFoundException, IOException {
+	public void loadFromFile(File configFile) throws IOException {
 		config.load(new FileInputStream(configFile));
 	}
 
