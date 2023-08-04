@@ -3,19 +3,20 @@ package de.jkarthaus.model;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ImageSortResult {
+public class SortResult {
 
     private int duplications;
     private int countImages;
     private int errors;
 
-    public ImageSortResult() {
+    public SortResult() {
         duplications = 0;
         countImages = 0;
         errors = 0;
     }
 
     public void increaseRegularImage() {
+
         countImages++;
     }
 

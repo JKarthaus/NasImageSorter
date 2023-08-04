@@ -1,6 +1,11 @@
 package de.jkarthaus;
 
+import de.jkarthaus.exceptions.ParameterNotPlausibleException;
+import de.jkarthaus.model.SortResult;
+import de.jkarthaus.service.MediaSortService;
 import io.micronaut.configuration.picocli.PicocliRunner;
+import io.micronaut.runtime.Micronaut;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
@@ -14,6 +19,9 @@ import java.nio.file.Path;
 @Slf4j
 public class NasImageSorterApplication implements Runnable {
 
+    @Inject
+    MediaSortService mediaSortService;
+
     @CommandLine.Option(names = {"-v", "--verbose"}, description = "...")
     boolean verbose;
 
@@ -23,65 +31,35 @@ public class NasImageSorterApplication implements Runnable {
     @CommandLine.Option(names = {"-o", "--output"}, description = "output folder", required = true)
     Path outputFolder;
 
+    @CommandLine.Option(names = {"-p", "--preText"}, description = "Prefix of Filenames", required = true)
+    String filenamePre;
+
     public static void main(String[] args) throws Exception {
+        Micronaut.build(args)
+                .banner(true)
+                .start();
         PicocliRunner.run(NasImageSorterApplication.class, args);
     }
 
     public void run() {
         log.info("Sorting Media Files from:{} to:{}", inputFolder, outputFolder);
-        // business logic here
-        if (verbose) {
-            System.out.println("Hi!");
+        SortResult sortResult = null;
+        try {
+            sortResult = mediaSortService.sortImages(
+                    inputFolder,
+                    outputFolder,
+                    filenamePre,
+                    verbose
+            );
+        } catch (ParameterNotPlausibleException e) {
+            System.exit(1);
+            //throw new RuntimeException(e);
         }
+        log.info("-----------------------------------------------------------");
+        log.info("Processed Files:{}", sortResult.getCountImages());
+        log.info("{} duplications detected", sortResult.getDuplications());
+        log.info("{} error occured", sortResult.getErrors());
     }
 }
 
 
-
-
-/*
-public class NasImageSorterApplication implements CommandLineRunner {
-
-    private final static Logger logger = LoggerFactory.getLogger(NasImageSorterApplication.class);
-
-    Date startTime = new Date();
-
-    @Autowired
-    ConfigTools configTools;
-
-    @Autowired
-    ImageSortWorker imageSortWorker;
-
-    @Autowired
-    PushOverWorker pushOverWorker;
-
-    @Override
-    public void run(String... args) throws Exception {
-        if (args == null || args.length != 1) {
-            logger.error("I want a config File at Parameter 1");
-            throw new ExitException();
-        }
-        File configFile = new File(args[0]);
-        if (!configFile.exists() || !configFile.canRead()) {
-            logger.error("Config File:" + args[0] + " not found or cannot read.");
-            throw new ExitException();
-        }
-        logger.info("--------------------------------------------------------------------------");
-
-        configTools.loadFromFile(configFile);
-        ImageSortResult imageSortResult = imageSortWorker.sortImages();
-        pushOverWorker.sendToPushOver(imageSortResult);
-        Date endTime = new Date();
-        long diff = endTime.getTime() - startTime.getTime();
-        logger.info("Working Time : " + (diff / 1000 % 60) + " Seconds.");
-        logger.info("--------------------------------------------------------------------------");
-
-    }
-
-
-    public static void main(String[] args) {
-        SpringApplication.run(NasImageSorterApplication.class, args);
-    }
-*/
-
-//}
