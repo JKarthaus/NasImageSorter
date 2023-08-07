@@ -44,7 +44,7 @@ dependencies {
 
 
 application {
-    mainClass.set("de.jkarthaus.MediaSorterApplication")
+    mainClass.set("de.jkarthaus.NasImageSorterApplication")
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
