@@ -1,5 +1,9 @@
 # NasImageSorter
-Import Images and Clips from one or many Sources to a Structured Image Destination.
+Sort Images and Video's from a flat directory source, into a hierarchical Directory based on the
+Image and Video Meta Information.
+
+---
+
 
 ## Folder Structure before NasImageSort
 ![Before NasImageSort](http://www.joern-karthaus.de/blog/img/unsortiert.png)
