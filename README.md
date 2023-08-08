@@ -12,9 +12,9 @@ Import Images and Clips from one or many Sources to a Structured Image Destinati
 Build the Source or [Download](https://github.com/JKarthaus/NasImageSorter/blob/master/_INSTALL_/MediaSorter) the Binary.  
 Edit the [Config File ](https://github.com/JKarthaus/NasImageSorter/blob/master/_INSTALL_/mediasorter.properties)  
 
-On most **Linux** Systems simply call ./MediaSorter <ConfigFile> 
+call java -jar NasImageSorter.jar
 
-ON **Windows** Systems you must type java -jar MediaSorter <ConfigFile>
+(Java 17 required)
 
 ## More Information
 You can find more in my [MediaSorter Blog Article](http://www.joern-karthaus.de/blog/mediaSort.html) (Sorry only in German)

@@ -1,0 +1,7 @@
+logger:
+  levels:
+    foo.bar: ERROR
+#Sun Jul 30 20:38:03 GMT 2023
+micronaut:
+  application:
+    name: NasImageSorter

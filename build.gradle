@@ -1,0 +1,74 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.micronaut.application") version "4.0.1"
+    id("io.micronaut.aot") version "4.0.2"
+}
+
+version = "2.0.1"
+group = "de.jkarthaus"
+
+repositories {
+    maven {
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        mavenContent { snapshotsOnly() }
+    }
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("info.picocli:picocli-codegen")
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    implementation("info.picocli:picocli")
+    implementation("io.micronaut.picocli:micronaut-picocli")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation group: 'commons-io', name: 'commons-io', version: '2.13.0'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.13.0'
+    // https://mvnrepository.com/artifact/org.apache.tika/tika-core
+    implementation group: 'org.apache.tika', name: 'tika-core', version: '2.8.0'
+// https://mvnrepository.com/artifact/org.apache.tika/tika-parser-image-module
+    implementation group: 'org.apache.tika', name: 'tika-parser-image-module', version: '2.8.0'
+// https://mvnrepository.com/artifact/org.apache.tika/tika-parsers
+    implementation group: 'org.apache.tika', name: 'tika-parsers', version: '2.8.0', ext: 'pom'
+// https://mvnrepository.com/artifact/org.apache.tika/tika-parser-audiovideo-module
+    implementation group: 'org.apache.tika', name: 'tika-parser-audiovideo-module', version: '2.8.0'
+
+    compileOnly("org.projectlombok:lombok")
+    compileOnly("org.graalvm.nativeimage:svm")
+    runtimeOnly("ch.qos.logback:logback-classic")
+
+    runtimeOnly("ch.qos.logback:logback-classic")
+}
+
+
+application {
+    mainClass.set("de.jkarthaus.NasImageSorterApplication")
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+graalvmNative.toolchainDetection = false
+micronaut {
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("de.jkarthaus.*")
+    }
+    aot {
+        // Please review carefully the optimizations enabled below
+        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+    }
+}
+
+
+

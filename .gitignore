@@ -1,3 +1,5 @@
 /.idea/
 /MediaSorter.iml
 /target/
+/build/
+/.gradle/
