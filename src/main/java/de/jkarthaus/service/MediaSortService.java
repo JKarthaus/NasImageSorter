@@ -24,7 +24,15 @@ import java.util.List;
 @Slf4j
 public class MediaSortService {
 
-    private final String[] extensions = new String[]{"jpg", "JPG", "mp4", "MP4"};
+    private final String[] extensions = new String[]
+            {
+                    "jpg",
+                    "JPG",
+                    "jpeg",
+                    "JPEG",
+                    "mp4",
+                    "MP4"
+            };
 
     static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 
@@ -43,12 +51,12 @@ public class MediaSortService {
 
         if (!source.toFile().exists()
                 || !source.toFile().isDirectory()) {
-            log.error("Source :{} not found, or is not a Directory",source);
+            log.error("Source :{} not found, or is not a Directory", source);
             throw new ParameterNotPlausibleException();
         }
         if (!destination.toFile().exists()
                 || !destination.toFile().isDirectory()) {
-            log.error("Destination :{} not found, or is not a Directory",destination);
+            log.error("Destination :{} not found, or is not a Directory", destination);
             throw new ParameterNotPlausibleException();
         }
         // -- Start the Process...
